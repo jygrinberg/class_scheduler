@@ -11,7 +11,7 @@ public class EventCreator {
 	public static void main(String[] args) throws IOException {
 
 		CourseExplorer ce = new CourseExplorer();
-		Course c = ce.getCourseByCode("EE101A");
+		Course c = ce.getCourseByCode("ME101");
 		
 	}
 }

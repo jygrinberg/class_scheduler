@@ -149,20 +149,74 @@ public class CalendarManager {
     			System.out.println("firstDate: " + firstDate);
     			System.out.println("beginTime: " + beginTime);
 
-    			DateTime startDate = DateTime.parseRfc3339(firstDate+"T"+beginTime+".000-07:00");
-    			event.setStart(new EventDateTime().setDateTime(startDate).setTimeZone("America/Los_Angeles"));
-    			DateTime endDate = DateTime.parseRfc3339(firstDate+"T"+endTime+".000-07:00");
-    			event.setEnd(new EventDateTime().setDateTime(endDate).setTimeZone("America/Los_Angeles"));
-    			event.setSummary(courseCode + ": " + location);
-    			event.setLocation(location);
-    			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+lastDate+"T"+endTime+"-07:00"));
-    			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+"20131224"+"T"+"100000"+"-07:00"));
+    			//List<String> recurrenceRules = Arrays.asList("RRULE:FREQ=WEEKLY","BYDAY="+dayList,"UNTIL="+lastDate+"T"+endTime+"-07:00"));
     			
-    			Event recurringEvent = calendar.events().insert("primary", event).execute();
+    			for (int d=0; d<listOfDays.size(); d++) {
+    				
+    				if (listOfDays.get(d).isEmpty()) continue;
+    				
+    				List<String> list = Arrays.asList(sect.getTerm().split("\\s"));
+    				String quarter = list.get(1);
+    				System.out.println(quarter);
+    				if (!quarter.toLowerCase().equals("spring")) continue;
+    				
+    				System.out.println("old: "+firstDate);    				
+    				firstDate = incrementDateByDayOfWeek(firstDate, listOfDays.get(d));
+    				System.out.println("new: "+firstDate);
+    				
+    				
+    				DateTime startDate = DateTime.parseRfc3339(firstDate+"T"+beginTime+".000-07:00");
+        			event.setStart(new EventDateTime().setDateTime(startDate).setTimeZone("America/Los_Angeles"));
+        			DateTime endDate = DateTime.parseRfc3339(firstDate+"T"+endTime+".000-07:00");
+        			event.setEnd(new EventDateTime().setDateTime(endDate).setTimeZone("America/Los_Angeles"));
+        			event.setSummary(courseCode + ": " + location);
+        			event.setLocation(location);
+        			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+lastDate+"T"+endTime+"-07:00"));
+        			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL="+"20131204"+"T"+"100000"+"-07:00"));
+        			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;UNTIL=20110701T100000-07:00"));
+        			List<String> recurrenceRules = new ArrayList<String>();
+        			recurrenceRules.add("RRULE:FREQ=WEEKLY");
+//        			System.out.println(dayList);
+//        			recurrenceRules.add("RRULE:BYDAY="+dayList+";");
+//        			recurrenceRules.add("COUNT=4");
+        			event.setRecurrence(recurrenceRules);
+        			
+        			Event recurringEvent = calendar.events().insert("primary", event).execute();
 
-    			System.out.println("Event ID: " + recurringEvent.getId());
+        			System.out.println("Event ID: " + recurringEvent.getId());
+
+    			}
+    			
     		}
     	}
+	}
+	
+
+	private String incrementDateByDayOfWeek(String date, String dayOfWeek) {
+		dayOfWeek = dayOfWeek.toLowerCase();
+		if (dayOfWeek.equals("monday")) {
+			return incrementDateByNum(date, 0);
+		} else if (dayOfWeek.equals("tuesday")) {
+			return incrementDateByNum(date, 1);
+		} else if (dayOfWeek.equals("wednesday")) {
+			return incrementDateByNum(date, 2);
+		} else if (dayOfWeek.equals("thursday")) {
+			return incrementDateByNum(date, 3);
+		} else if (dayOfWeek.equals("friday")) {
+			return incrementDateByNum(date, 4);
+		}
+		return "";
+	}
+	
+	private String incrementDateByNum(String date, int numDays) {
+		int newDayOfMonth = Integer.parseInt(date.substring(date.length()-2, date.length())) + numDays;
+		date = date.substring(0, date.length()-2);
+		if (newDayOfMonth < 10) {
+			date += "0" + newDayOfMonth +"";
+		} else {
+			date += newDayOfMonth +"";			
+		}
+		return date;
 	}
 
 	/**
