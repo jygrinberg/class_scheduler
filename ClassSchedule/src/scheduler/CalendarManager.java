@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
@@ -77,6 +78,10 @@ public class CalendarManager {
 	    	return;
 	    }
 
+	    if (c == null) {
+	    	System.out.println("Attempting to create event for null Course");
+	    }
+	    	    
     	Set<Section> sections = c.getSections();
     	for (Section sect : sections) {	
     		if (!sect.getComponent().equals("LEC")) { // temporary: only add lectures for now -- we will do discussions later
@@ -84,6 +89,23 @@ public class CalendarManager {
     		}
     		
     		for (MeetingSchedule sched : sect.getMeetingSchedules()) {
+//    			Event event = new Event();
+//    			
+//    			String courseCode = c.getSubjectCodePrefix()+c.getSubjectCodeSuffix();
+//    			String location = sched.getLocation();
+//    			event.setSummary(courseCode + " - " + location);
+//    			event.setLocation(location);
+//    			Date startDate = new Date();
+//    			Date endDate = new Date(startDate.getTime() + 3600000);
+//    			DateTime start = new DateTime(startDate, TimeZone.getTimeZone("UTC"));
+//    			event.setStart(new EventDateTime().setDateTime(start));
+//    			DateTime end = new DateTime(endDate, TimeZone.getTimeZone("UTC"));
+//    			event.setEnd(new EventDateTime().setDateTime(end));
+//
+//    			Event createdEvent = calendar.events().insert("primary", event).execute();
+//
+//    			System.out.println("Event ID: " + createdEvent.getId());
+    			
     			Event event = new Event();
     			
     			// Obtain class schedule data
@@ -95,34 +117,47 @@ public class CalendarManager {
     			String endTime = sched.getEndTime();
     			// days
     			String days = sched.getDays();
-    			String removetxt1 = "\t";
-    			String removetxt2 = "\n";
-    			days = days.replaceAll("(?i)" + removetxt1, "");
-    			days = days.replaceAll("(?i)" + removetxt2, "|");
-    			Scanner s = new Scanner(days).useDelimiter("\\s*|\\s*");
-    			ArrayList<String> listOfDays = new ArrayList<String>();
-    			while (s.hasNext()) {
-    				listOfDays.add(s.next());
-    			}
+    			List<String> listOfDays = Arrays.asList(days.split("\\s\\s*"));
+
+//    			String removetxt1 = "\t";
+//    			String removetxt2 = "\n";
+//    			days = days.replaceAll("(?i)" + removetxt1, "");
+//    			days = days.replaceAll("(?i)" + removetxt2, "|");
+//    			Scanner s = new Scanner(days).useDelimiter("\\s*|\\s*");
+    			
+//    			ArrayList<String> listOfDays = new ArrayList<String>();
+//    			while (s.hasNext()) {
+//    				listOfDays.add(s.next());
+//    			}
+    			
     			String dayList = "";
     			for (int i = 0; i < listOfDays.size(); i++) {
-    				String str = listOfDays.get(i);
-    				str = (str.substring(0,1)).toUpperCase();
-    				dayList.concat(str);
+    				String day = listOfDays.get(i).toUpperCase();
+    				if (day.isEmpty()) continue;
+
+    				if (day.length() > 1) {
+        				day = day.substring(0,2);
+    				}
+    				
+    				dayList += day;
     				if (i != listOfDays.size()-1) {
-    					dayList.concat(",");
+    					dayList += ",";
     				}
     			}
-    			
+    			    			
     			// Set parameters of calendar event
-    			DateTime startDate = DateTime.parseRfc3339(firstDate+"T"+beginTime);
+    			System.out.println("firstDate: " + firstDate);
+    			System.out.println("beginTime: " + beginTime);
+
+    			DateTime startDate = DateTime.parseRfc3339(firstDate+"T"+beginTime+".000-07:00");
     			event.setStart(new EventDateTime().setDateTime(startDate).setTimeZone("America/Los_Angeles"));
-    			DateTime endDate = DateTime.parseRfc3339(firstDate+"T"+endTime);
+    			DateTime endDate = DateTime.parseRfc3339(firstDate+"T"+endTime+".000-07:00");
     			event.setEnd(new EventDateTime().setDateTime(endDate).setTimeZone("America/Los_Angeles"));
     			event.setSummary(courseCode + ": " + location);
     			event.setLocation(location);
-    			event.setRecurrence(Arrays.asList("RRULE:FREQ=MONTHLY;BYDAY="+dayList+";UNTIL="+lastDate+"T"+endTime+"-07:00"));
-
+    			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+lastDate+"T"+endTime+"-07:00"));
+    			event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+"20131224"+"T"+"100000"+"-07:00"));
+    			
     			Event recurringEvent = calendar.events().insert("primary", event).execute();
 
     			System.out.println("Event ID: " + recurringEvent.getId());

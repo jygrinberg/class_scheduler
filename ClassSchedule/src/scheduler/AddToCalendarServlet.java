@@ -14,10 +14,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-import java.util.ArrayList;
+import java.util.*;
 import java.io.IOException;
 import edu.stanford.services.explorecourses.Course;
-
 
 /**
  * Servlet implementation class AddToCalendarServlet
@@ -47,18 +46,26 @@ public class AddToCalendarServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 				
-		String myClass = request.getParameter("class"); // TODO: parse array of classes
+		String classesStr = request.getParameter("classes"); // TODO: parse array of classes
 		
-		// Trim whitespace in the String
-		myClass = myClass.replaceAll("\\s","");
-		System.out.println(myClass);
+		List<String> classesStrList = Arrays.asList(classesStr.split("\\s*,\\s*"));
+
+//		Trim whitespace in the String
+//		myClass = myClass.replaceAll("\\s","");
+//		System.out.println(myClass);
 		
 		CourseExplorer ce = new CourseExplorer();
-		Course c = ce.getCourseByCode(myClass);
-		
 		// Keep track of classes that have been entered
 		ArrayList<Course> classes = new ArrayList<Course>();
-		classes.add(c);
+
+		for (String classStr : classesStrList) {
+			System.out.println("classStr: " + classStr);
+			Course c = ce.getCourseByCode(classStr.toUpperCase());
+			if (c != null) {
+				classes.add(c);
+			}
+		}
+		
 		request.getSession().setAttribute("ClassesEntered", classes);
 		
 		String redirectURIwithCode = "http://localhost:8080/ClassSchedule/index.jsp";

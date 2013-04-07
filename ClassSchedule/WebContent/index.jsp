@@ -29,7 +29,7 @@
 		
 		<form action="AddToCalendarServlet" method="post">
 			<h2>1. Enter your course titles, separated by commas</h2>
-			<input type="text" name="class" class="input_field courses" placeholder="ex: CS140, CS229, EE108A">
+			<input type="text" name="classes" class="input_field courses" placeholder="ex: CS140, CS229, EE108A">
 			
 			<h2>2. Log in to Google to add your classes</h2>
 			<input type="submit" value="Add to Calendar"/ class="input_button">

@@ -16,7 +16,6 @@ public class CourseExplorer {
 	 * Returns the first course retrieved named 'courseCode'.
 	 */
 	public static Course getCourseByCode(String courseCode) {
-		System.out.println(courseCode);
 		System.setProperty ("jsse.enableSNIExtension", "false");
 	    ExploreCoursesConnection connection = new ExploreCoursesConnection();
 	    
@@ -28,8 +27,8 @@ public class CourseExplorer {
 	    }
 	    
 	    for (Course c : courses) {
-	    	System.out.println("Fetched course code: " + c.getSubjectCodePrefix()+c.getSubjectCodeSuffix());
-	    	System.out.println("Course code: " + courseCode);
+//	    	System.out.println("Fetched course code: " + c.getSubjectCodePrefix()+c.getSubjectCodeSuffix());
+//	    	System.out.println("Course code: " + courseCode);
 	    	if (courseCode.equals((c.getSubjectCodePrefix()+c.getSubjectCodeSuffix()))) { //confirm course code matches courseCode exactly
 		    	Set<Section> sections = c.getSections();
 		    	for (Section sect : sections) {	
