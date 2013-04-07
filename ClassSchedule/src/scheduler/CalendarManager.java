@@ -156,7 +156,7 @@ public class CalendarManager {
     			event.setSummary(courseCode + ": " + location);
     			event.setLocation(location);
     			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+lastDate+"T"+endTime+"-07:00"));
-    			event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+"20131224"+"T"+"100000"+"-07:00"));
+    			//event.setRecurrence(Arrays.asList("RRULE:FREQ=WEEKLY;BYDAY="+dayList+";UNTIL="+"20131224"+"T"+"100000"+"-07:00"));
     			
     			Event recurringEvent = calendar.events().insert("primary", event).execute();
 
