@@ -35,10 +35,7 @@
 			<input type="submit" value="Add to Calendar"/ class="input_button">
 		</form>
 	
-	</div>
-	
-<% 
-if (session.getAttribute("CalendarManager") != null && session.getAttribute("ClassesEntered") != null) {
+	<% if (session.getAttribute("CalendarManager") != null && session.getAttribute("ClassesEntered") != null) {
 	
 	CalendarManager cm = (CalendarManager) session.getAttribute("CalendarManager");
 
@@ -52,25 +49,14 @@ if (session.getAttribute("CalendarManager") != null && session.getAttribute("Cla
 		cm.createEvent(c);
 	}
 	
+	%>
+	<h2 class="add_success_h2"><a href="http://www.google.com/calendar" class="add_success">Classes added!</a></h2>
+	<%
 	session.setAttribute("ClassesEntered", null);
 	
 }
-/*
-String courseNumStr = "cs+103";
-Document doc = Jsoup.connect("http://explorecourses.stanford.edu/search?view=catalog&filter-coursestatus-Active=on&page=0&catalog=&academicYear=&q="+courseNumStr+"&collapse=").get();
-Elements courseNumbers = doc.select(".courseNumber");
-for (Element course : courseNumbers) {
-	System.out.println(course.text());
-}	
-*/
-/*
-ArrayList<String> classes = (ArrayList<String>) session.getAttribute("classes");
-if (classes != null) {
-	for (String myClass : classes)
-		out.println("<p>"+myClass+" has been added to your calendar. </p>");
-}
-*/
-%>
+	%>
+	</div>
 
 </body>
 </html> 
